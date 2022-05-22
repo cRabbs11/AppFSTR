@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="text_size_smallest">12sp</dimen>
+    <dimen name="text_size_normal">14sp</dimen>
+    <dimen name="text_size_big">16sp</dimen>
+    <dimen name="text_size_biggest">20sp</dimen>
+    <dimen name="text_size_large">24sp</dimen>
+
+    <dimen name="image_height_normal">200dp</dimen>
+    <dimen name="image_width_normal">200dp</dimen>
+
+    <dimen name="height_button_big">54dp</dimen>
+    <dimen name="height_button_large">72dp</dimen>
+
+    <dimen name="height_normal">48dp</dimen>
+    <dimen name="height_big">72dp</dimen>
+
+    <dimen name="width_small">36dp</dimen>
+    <dimen name="width_normal">54dp</dimen>
+    <dimen name="width_big">72dp</dimen>
+    <dimen name="width_large">92dp</dimen>
+
+    <dimen name="padding_large">75dp</dimen>
+    <dimen name="padding_largest">100dp</dimen>
+
+    <dimen name="margin_tiny">10dp</dimen>
+    <dimen name="margin_smallest">15dp</dimen>
+    <dimen name="margin_small">25dp</dimen>
+    <dimen name="margin_normal">50dp</dimen>
+    <dimen name="margin_large">75dp</dimen>
+
+    <dimen name="corner_radius_small">12dp</dimen>
+    <dimen name="corner_radius_normal">36dp</dimen>
+
+    <dimen name="chip_spacing_tiny">6dp</dimen>
+    <dimen name="chip_spacing_smallest">12dp</dimen>
+    <dimen name="chip_spacing_small">24dp</dimen>
+    <dimen name="chip_spacing_normal">42dp</dimen>
+</resources>
