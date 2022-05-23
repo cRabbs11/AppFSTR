@@ -20,6 +20,7 @@ class AddMountainFragmentViewModel: ViewModel() {
     private var mountainLon = ""
     private var mountainHeight = ""
     var imageListLiveData = MutableLiveData<List<Image>>()
+    var imageDescriptionLiveData = MutableLiveData<String>()
 
     @Inject
     lateinit var retrofit: PerevalRetrofit
@@ -44,6 +45,10 @@ class AddMountainFragmentViewModel: ViewModel() {
         newList.addAll(oldList)
         newList.add(image)
         imageListLiveData.postValue(newList)
+    }
+
+    fun setImageDescription(descr: String) {
+        imageDescriptionLiveData.postValue(descr)
     }
 
     fun removeImage(image: Image) {

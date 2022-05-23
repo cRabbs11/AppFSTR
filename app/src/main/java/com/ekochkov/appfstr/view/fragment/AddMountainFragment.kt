@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.ekochkov.appfstr.R
@@ -91,6 +92,12 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.imageDescriptionLiveData.observe(viewLifecycleOwner) {
+            if (!binding.imageDescriptionEditText.editText?.text.toString().equals(it)) {
+                binding.imageDescriptionEditText.editText?.setText(it)
+            }
+        }
 
         viewModel.imageListLiveData.observe(viewLifecycleOwner) {
             updateImageRecyclerView(it)
@@ -191,6 +198,12 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
 
         binding.chipAddDifficult.setOnClickListener {
             setSubDifficultToCategoryText(binding.chipAddDifficult.isChecked)
+        }
+
+        binding.imageDescriptionEditText.editText?.doAfterTextChanged {
+            if (it.isNullOrEmpty()) {
+                viewModel.setImageDescription(it.toString())
+            }
         }
 
         imageAdapter = ImageAdapter(this)
