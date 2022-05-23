@@ -18,23 +18,23 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.core.os.bundleOf
+import androidx.fragment.app.DialogFragment
+import com.ekochkov.appfstr.R
 import com.ekochkov.appfstr.databinding.FragmentCameraBinding
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
 
-class CameraFragment: Fragment() {
+class CameraFragment: DialogFragment() {
 
     private lateinit var binding: FragmentCameraBinding
+    private val TAKE_PHOTO_FAILED = "что-то пошло не так"
 
     private val permissionCameraLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
             openCamera()
         }
     }
-
-    private lateinit var cameraExecutor: ExecutorService
 
     private var imageCapture: ImageCapture? = null
 
@@ -55,9 +55,8 @@ class CameraFragment: Fragment() {
         } else {
             permissionCameraLauncher.launch(Manifest.permission.CAMERA)
         }
-
-        openCamera()
         binding.takePhotoBtn.setOnClickListener {
+            binding.takePhotoBtn.isEnabled = false
             takePhoto()
         }
     }
@@ -69,6 +68,7 @@ class CameraFragment: Fragment() {
     }
 
     private fun openCamera() {
+
         imageCapture = ImageCapture.Builder().build()
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -132,21 +132,30 @@ class CameraFragment: Fragment() {
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e("BMTH", "Photo capture failed: ${exc.message}", exc)
+                    binding.takePhotoBtn.isEnabled = true
+                    Toast.makeText(requireContext(), TAKE_PHOTO_FAILED, Toast.LENGTH_SHORT).show()
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults){
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d("BMTH", msg)
+                override fun onImageSaved(output: ImageCapture.OutputFileResults){
+                    parentFragmentManager.setFragmentResult(
+                        REQUEST_CAMERA_KEY,
+                        bundleOf(
+                            BUNDLE_IMAGE_URI_STRING_KEY to output.savedUri.toString())
+                    )
+                    dismiss()
                 }
             }
         )
     }
 
+    override fun getTheme(): Int {
+        return R.style.FullSizeDialogTheme
+    }
+
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        const val REQUEST_CAMERA_KEY = "camera"
+        const val BUNDLE_IMAGE_URI_STRING_KEY = "image_uri"
     }
 
 }

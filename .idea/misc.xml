@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.163" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/image_background.xml" value="0.163" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/dialog_fragment_coords.xml" value="0.2653985507246377" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_add_mountain.xml" value="0.33" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_camera.xml" value="0.22" />

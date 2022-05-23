@@ -19,6 +19,7 @@ class AddMountainFragmentViewModel: ViewModel() {
     private var mountainLat = ""
     private var mountainLon = ""
     private var mountainHeight = ""
+    var imageListLiveData = MutableLiveData<List<Image>>()
 
     @Inject
     lateinit var retrofit: PerevalRetrofit
@@ -35,6 +36,20 @@ class AddMountainFragmentViewModel: ViewModel() {
 
     init {
         App.instance.dagger.inject(this)
+    }
+
+    fun addImage(image: Image) {
+        val oldList = imageListLiveData.value?: arrayListOf()
+        val newList = arrayListOf<Image>()
+        newList.addAll(oldList)
+        newList.add(image)
+        imageListLiveData.postValue(newList)
+    }
+
+    fun removeImage(image: Image) {
+        val oldList = imageListLiveData.value as ArrayList<Image>
+        oldList.remove(image)
+        imageListLiveData.postValue(oldList)
     }
 
     fun setMountainName(name: String) {

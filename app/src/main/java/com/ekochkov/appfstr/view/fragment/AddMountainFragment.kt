@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -21,7 +22,6 @@ import com.ekochkov.appfstr.databinding.FragmentAddMountainBinding
 import com.ekochkov.appfstr.utils.Base64Converter
 import com.ekochkov.appfstr.utils.CoordsConverter
 import com.ekochkov.appfstr.utils.DateConverter
-import com.ekochkov.appfstr.view.activity.MainActivity
 import com.ekochkov.appfstr.view.adapters.ImageAdapter
 import com.ekochkov.appfstr.view.viewHolders.ImageHolder
 import com.ekochkov.appfstr.viewModel.AddMountainFragmentViewModel
@@ -32,6 +32,7 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
 
     private val TAG_DATE_PICKER_FRAGMENT = "date_picker_fragment"
     private val TAG_COORDS_DIALOG_FRAGMENT = "coords_dialog_fragment"
+    private val TAG_CAMERA_DIALOG_FRAGMENT = "coords_camera_fragment"
     private val TEXT_SELECT_DATE = "Выберите дату"
     private val TEXT_LATITUDE_EXAMPLE = "N 55 36.4999"
     private val TEXT_LONGTITUDE_EXAMPLE = "E 17 18.2332"
@@ -55,8 +56,6 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
     private var mountainLat = ""
     private var mountainLon = ""
     private var mountainHeight = ""
-    private var imageList = arrayListOf<Image>()
-
 
     val permissionReadStorageLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
@@ -66,22 +65,14 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
 
     val permissionCameraLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
-            (activity as MainActivity).openCameraFragment()
+            openCamera()
         }
     }
 
     val imageListener = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val imageUri = it.data?.data
-        if (imageUri!=null) {
-            if (Build.VERSION.SDK_INT >= 28) {
-                val source = ImageDecoder.createSource(requireContext().contentResolver, imageUri)
-                val bitmap = ImageDecoder.decodeBitmap(source)
-                val stringImage = Base64Converter.fromBitmapToBase64(bitmap)
-                imageList.add(Image("test_title", stringImage))
-                updateImageRecyclerView()
-            }
-        } else {
-            println("imageUri is null")
+        val image = buildImage(it.data?.data)
+        if (image!=null) {
+            viewModel.addImage(image)
         }
     }
 
@@ -101,6 +92,24 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.imageListLiveData.observe(viewLifecycleOwner) {
+            updateImageRecyclerView(it)
+
+            if (it.isEmpty()) {
+                binding.imageDescriptionEditText.visibility = View.GONE
+            } else {
+                binding.imageDescriptionEditText.visibility = View.VISIBLE
+            }
+
+            if (it.size>=3) {
+                binding.addFromCameraBtn.isEnabled = false
+                binding.addFromGalleryBtn.isEnabled = false
+            } else {
+                binding.addFromCameraBtn.isEnabled = true
+                binding.addFromGalleryBtn.isEnabled = true
+            }
+        }
+
         childFragmentManager.setFragmentResultListener(CoordsDialogFragment.REQUEST_COORDS_KEY, viewLifecycleOwner) { requestKey, bundle ->
             when (requestKey) {
                 CoordsDialogFragment.REQUEST_COORDS_KEY -> {
@@ -116,6 +125,17 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
                     val lonText = "${lon[0]} ${lon[1]}.${lon[2]}"
 
                     binding.openCoordsBtn.text = "$latDir $latText\n$lonDir $lonText"
+                }
+            }
+        }
+
+        childFragmentManager.setFragmentResultListener(CameraFragment.REQUEST_CAMERA_KEY, viewLifecycleOwner) { requestKey, bundle ->
+            when (requestKey) {
+                CameraFragment.REQUEST_CAMERA_KEY -> {
+                    val image = buildImage(Uri.parse(bundle.getString(CameraFragment.BUNDLE_IMAGE_URI_STRING_KEY)))
+                    if (image!=null) {
+                        viewModel.addImage(image)
+                    }
                 }
             }
         }
@@ -144,7 +164,7 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
         }
         binding.addFromCameraBtn.setOnClickListener {
             if (checkPermission(Manifest.permission.CAMERA)) {
-                (activity as MainActivity).openCameraFragment()
+                openCamera()
             } else {
                 requestPermission(Manifest.permission.CAMERA)
             }
@@ -190,6 +210,12 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
         imageListener.launch(gallery)
     }
 
+    private fun openCamera() {
+        //(activity as MainActivity).openCameraFragment()
+        val coordsDialog = CameraFragment()
+        coordsDialog.show(childFragmentManager, TAG_CAMERA_DIALOG_FRAGMENT)
+    }
+
     private fun requestPermission(permission: String) {
         when (permission) {
             Manifest.permission.READ_EXTERNAL_STORAGE -> {
@@ -201,23 +227,22 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
         }
     }
 
-    private fun updateImageRecyclerView() {
+    private fun buildImage(uri: Uri?): Image? {
+        if (Build.VERSION.SDK_INT >= 28 && uri!=null) {
+            val source = ImageDecoder.createSource(requireContext().contentResolver, uri)
+            val bitmap = ImageDecoder.decodeBitmap(source)
+            val stringImage = Base64Converter.fromBitmapToBase64(bitmap)
+            return Image("test_title", stringImage)
+        }
+        //В задании есть требование по версии ОС не ниже android 29
+        return null
+    }
+
+    private fun updateImageRecyclerView(imageList: List<Image>) {
         imageAdapter.images.clear()
         imageAdapter.images.addAll(imageList)
         imageAdapter.notifyDataSetChanged()
-        updateUI()
     }
-
-    private fun updateUI() {
-        if (imageList.size>=3) {
-            binding.addFromCameraBtn.isEnabled = false
-            binding.addFromGalleryBtn.isEnabled = false
-        } else {
-            binding.addFromCameraBtn.isEnabled = true
-            binding.addFromGalleryBtn.isEnabled = true
-        }
-    }
-
 
     private fun setSubDifficultToCategoryText(value: Boolean) {
         var textA1 = getString(R.string.category_a1)
@@ -320,7 +345,6 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
     }
 
     override fun onDeleteImageClick(image: Image) {
-        imageList.remove(image)
-        updateImageRecyclerView()
+        viewModel.removeImage(image)
     }
 }

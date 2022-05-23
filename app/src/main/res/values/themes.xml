@@ -30,4 +30,10 @@
         <item name="strokeWidth">10dp</item>
     </style>
 
+    <style name="FullSizeDialogTheme" parent="Theme.AppFSTR">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
 </resources>

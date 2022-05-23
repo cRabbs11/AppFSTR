@@ -10,6 +10,7 @@
     <string name="social_links">ссылки на соцсети</string>
     <string name="optional">по желанию</string>
     <string name="mountain_name">название перевала</string>
+    <string name="image_description">описание к фото</string>
     <string name="height">высота</string>
     <string name="metres">метров</string>
     <string name="mountain_category">категория перевала</string>
