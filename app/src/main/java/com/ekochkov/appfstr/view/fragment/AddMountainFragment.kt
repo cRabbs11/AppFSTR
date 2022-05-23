@@ -23,11 +23,12 @@ import com.ekochkov.appfstr.utils.CoordsConverter
 import com.ekochkov.appfstr.utils.DateConverter
 import com.ekochkov.appfstr.view.activity.MainActivity
 import com.ekochkov.appfstr.view.adapters.ImageAdapter
+import com.ekochkov.appfstr.view.viewHolders.ImageHolder
 import com.ekochkov.appfstr.viewModel.AddMountainFragmentViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.util.*
 
-class AddMountainFragment: Fragment() {
+class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
 
     private val TAG_DATE_PICKER_FRAGMENT = "date_picker_fragment"
     private val TAG_COORDS_DIALOG_FRAGMENT = "coords_dialog_fragment"
@@ -54,6 +55,8 @@ class AddMountainFragment: Fragment() {
     private var mountainLat = ""
     private var mountainLon = ""
     private var mountainHeight = ""
+    private var imageList = arrayListOf<Image>()
+
 
     val permissionReadStorageLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
@@ -74,7 +77,8 @@ class AddMountainFragment: Fragment() {
                 val source = ImageDecoder.createSource(requireContext().contentResolver, imageUri)
                 val bitmap = ImageDecoder.decodeBitmap(source)
                 val stringImage = Base64Converter.fromBitmapToBase64(bitmap)
-                viewModel.addImage(Image("test_title", stringImage))
+                imageList.add(Image("test_title", stringImage))
+                updateImageRecyclerView()
             }
         } else {
             println("imageUri is null")
@@ -114,12 +118,6 @@ class AddMountainFragment: Fragment() {
                     binding.openCoordsBtn.text = "$latDir $latText\n$lonDir $lonText"
                 }
             }
-        }
-
-        viewModel.imageListLiveData.observe(viewLifecycleOwner) {
-            imageAdapter.images.clear()
-            imageAdapter.images.addAll(it)
-            imageAdapter.notifyDataSetChanged()
         }
 
         binding.addMountainBtn.setOnClickListener {
@@ -175,7 +173,7 @@ class AddMountainFragment: Fragment() {
             setSubDifficultToCategoryText(binding.chipAddDifficult.isChecked)
         }
 
-        imageAdapter = ImageAdapter()
+        imageAdapter = ImageAdapter(this)
         binding.imageRecyclerView.adapter = imageAdapter
 
         initView()
@@ -200,6 +198,23 @@ class AddMountainFragment: Fragment() {
             Manifest.permission.CAMERA -> {
                 permissionCameraLauncher.launch(permission)
             }
+        }
+    }
+
+    private fun updateImageRecyclerView() {
+        imageAdapter.images.clear()
+        imageAdapter.images.addAll(imageList)
+        imageAdapter.notifyDataSetChanged()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        if (imageList.size>=3) {
+            binding.addFromCameraBtn.isEnabled = false
+            binding.addFromGalleryBtn.isEnabled = false
+        } else {
+            binding.addFromCameraBtn.isEnabled = true
+            binding.addFromGalleryBtn.isEnabled = true
         }
     }
 
@@ -302,5 +317,10 @@ class AddMountainFragment: Fragment() {
 
     private fun showToast(text: String) {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDeleteImageClick(image: Image) {
+        imageList.remove(image)
+        updateImageRecyclerView()
     }
 }

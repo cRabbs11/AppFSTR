@@ -6,11 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ekochkov.appfstr.R
 import com.ekochkov.appfstr.data.entity.Image
 import com.ekochkov.appfstr.utils.Base64Converter
-import com.ekochkov.appfstr.utils.Converter
 import com.ekochkov.appfstr.view.viewHolders.ImageHolder
-import com.squareup.picasso.Picasso
 
-class ImageAdapter(): RecyclerView.Adapter<ImageHolder>() {
+class ImageAdapter(private val onClickListener: ImageHolder.onClickListener): RecyclerView.Adapter<ImageHolder>() {
 
     val images = arrayListOf<Image>()
 
@@ -26,6 +24,9 @@ class ImageAdapter(): RecyclerView.Adapter<ImageHolder>() {
         //holder.binding.image.setImageURI(image.uri)
         holder.binding.image.setImageBitmap(bitmap)
         //Picasso.get().load(bitmap).into(holder.binding.image)
+        holder.binding.closeImage.setOnClickListener {
+            onClickListener.onDeleteImageClick(image)
+        }
     }
 
     override fun getItemCount(): Int {
