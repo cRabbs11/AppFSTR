@@ -9,9 +9,13 @@ object Base64Converter {
 
     const val COMPRESS_FULL_QUALITY = 100
 
-    fun fromBase64ToBitmap(encodedImage: String): Bitmap {
+    fun fromBase64ToBitmap(encodedImage: String): Bitmap? {
         val decodedString: ByteArray = Base64.decode(encodedImage, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+        return try {
+            BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+        } catch (e: NullPointerException) {
+            null
+        }
     }
 
     fun fromBitmapToBase64(bitmap: Bitmap): String {

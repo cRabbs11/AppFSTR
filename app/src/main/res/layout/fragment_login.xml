@@ -5,6 +5,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/blue_light">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/undraw_adventure_map_hnin"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/describe_mountain"
+        android:textSize="@dimen/text_size_largest"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/margin_normal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/login_btn"
+        android:text="@string/describe_mountain_on_login"
+        android:textSize="@dimen/text_size_biggest"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/margin_normal"/>
+
     <Button
         android:id="@+id/login_btn"
         android:layout_width="wrap_content"

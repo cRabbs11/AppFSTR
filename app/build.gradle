@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -61,6 +62,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     //okhttp logging
     implementation "com.squareup.okhttp3:logging-interceptor:3.12.6"
+    //retrofit with rx
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
+    implementation "io.reactivex.rxjava3:rxjava:3.0.10"
 
     //Dagger
     implementation 'com.google.dagger:dagger:2.30.1'
@@ -86,6 +90,5 @@ dependencies {
     //rxJava with room
     implementation "androidx.room:room-rxjava3:$room_version"
 
-    //Picasso
-    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.0'
 }

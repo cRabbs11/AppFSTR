@@ -35,12 +35,11 @@ class RegisterFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.userId.observe(viewLifecycleOwner, {
+        viewModel.userId.observe(viewLifecycleOwner) {
             if (it!=null) {
-                println("!!! ${it.toString()}")
                 (activity as MainActivity).openHomeFragment()
             }
-        })
+        }
 
         binding.loginBtn.setOnClickListener {
             if (isInputDataCorrect()) {
@@ -66,7 +65,7 @@ class RegisterFragment: Fragment() {
         } else if (!isNameCorrect(binding.fatherNameEditText.editText?.text.toString())) {
             showToast(FATHER_NAME_INCORRECT)
             return false
-        } else if (!isEmailCorrect()) {
+        } else if (!isEmailCorrect(binding.emailEditText.editText?.text.toString())) {
             showToast(EMAIL_INCORRECT)
             return false
         } else if (!isPhoneCorrect()) {
@@ -77,11 +76,11 @@ class RegisterFragment: Fragment() {
     }
 
     private fun isNameCorrect(name: String): Boolean {
-        return true
+        return name.isNotEmpty()
     }
 
-    private fun isEmailCorrect(): Boolean {
-        return true
+    private fun isEmailCorrect(name: String): Boolean {
+        return name.isNotEmpty()
     }
 
     private fun isPhoneCorrect(): Boolean {

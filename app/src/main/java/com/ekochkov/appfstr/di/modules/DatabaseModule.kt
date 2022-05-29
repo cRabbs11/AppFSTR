@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.ekochkov.appfstr.data.AppDatabase
 import com.ekochkov.appfstr.data.Repository
-import com.ekochkov.appfstr.data.dao.MountainDao
 import com.ekochkov.appfstr.data.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -19,7 +18,7 @@ class DatabaseModule {
         return Room.databaseBuilder(
                 context,
                 AppDatabase::class.java,
-                AppDatabase.USERS_TABLE_NAME)
+                AppDatabase.MAIN_DB_NAME)
                 .build()
                 .userDao()
     }

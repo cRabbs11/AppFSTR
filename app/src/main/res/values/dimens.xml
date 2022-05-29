@@ -6,21 +6,33 @@
     <dimen name="text_size_big">16sp</dimen>
     <dimen name="text_size_biggest">20sp</dimen>
     <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_largest">36sp</dimen>
 
     <dimen name="image_height_normal">200dp</dimen>
     <dimen name="image_width_normal">200dp</dimen>
 
+    <dimen name="image_height_big">250dp</dimen>
+    <dimen name="image_width_big">250dp</dimen>
+
+    <dimen name="image_height_large">300dp</dimen>
+    <dimen name="image_width_large">300dp</dimen>
+
     <dimen name="height_button_big">54dp</dimen>
     <dimen name="height_button_large">72dp</dimen>
 
+    <dimen name="height_smallest">24dp</dimen>
+    <dimen name="height_small">36dp</dimen>
     <dimen name="height_normal">48dp</dimen>
     <dimen name="height_big">72dp</dimen>
 
+    <dimen name="width_smallest">24dp</dimen>
     <dimen name="width_small">36dp</dimen>
     <dimen name="width_normal">54dp</dimen>
     <dimen name="width_big">72dp</dimen>
     <dimen name="width_large">92dp</dimen>
 
+    <dimen name="padding_2">2dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
     <dimen name="padding_large">75dp</dimen>
     <dimen name="padding_largest">100dp</dimen>
 

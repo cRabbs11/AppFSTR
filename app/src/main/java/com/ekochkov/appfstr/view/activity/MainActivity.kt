@@ -3,6 +3,8 @@ package com.ekochkov.appfstr.view.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.ekochkov.appfstr.R
+import com.ekochkov.appfstr.data.entity.Mountain
+import com.ekochkov.appfstr.utils.Constants
 import com.ekochkov.appfstr.view.fragment.*
 
 class MainActivity : AppCompatActivity() {
@@ -44,22 +46,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openAddMountainFragment() {
-
         val fragment = AddMountainFragment()
-
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-    }
-
-    fun openCameraFragment() {
-        val fragment = CameraFragment()
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    fun openAddMountainFragment(mountainCashedId: Int) {
+        val fragment = AddMountainFragment()
+        val bundle = Bundle()
+        bundle.putInt(Constants.MOUNTAIN_CASHED_ID, mountainCashedId)
+        fragment.arguments = bundle
+
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
     }
 
     override fun onBackPressed() {

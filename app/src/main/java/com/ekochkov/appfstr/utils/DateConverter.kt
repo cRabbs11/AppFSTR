@@ -1,5 +1,6 @@
 package com.ekochkov.appfstr.utils
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -11,5 +12,17 @@ object DateConverter {
         val date = Date(time)
         val dateFormat = SimpleDateFormat(pattern, Locale.getDefault())
         return dateFormat.format(date)
+    }
+
+    fun fromTextToLong(time: String, pattern: String): Long? {
+        val dateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+        return try {
+            val date = dateFormat.parse(time)
+            val timeLong = date?.time
+            timeLong
+        } catch (e: ParseException) {
+            println("${e.printStackTrace()}")
+            null
+        }
     }
 }

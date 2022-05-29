@@ -20,118 +20,58 @@
     <!-- строка широты -->
     <TextView
         android:id="@+id/latitude_text"
-        android:text="@string/latitude_symbol"
-        android:layout_width="@dimen/width_small"
+        android:text="@string/latitude_abbr"
+        android:layout_width="0dp"
         android:layout_height="@dimen/height_big"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_text"
+        app:layout_constraintEnd_toStartOf="@id/latitude_degr_edit_text"
         android:textSize="@dimen/text_size_large"
-        android:gravity="center_vertical"
-        android:layout_marginStart="@dimen/margin_small" />
+        android:gravity="center"
+        android:layout_marginStart="@dimen/margin_small"
+        app:layout_constraintHorizontal_weight="1"/>
 
     <EditText
         android:id="@+id/latitude_degr_edit_text"
-        android:layout_width="@dimen/width_normal"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/height_normal"
         app:layout_constraintTop_toTopOf="@id/latitude_text"
         app:layout_constraintBottom_toBottomOf="@id/latitude_text"
         app:layout_constraintStart_toEndOf="@id/latitude_text"
-        app:layout_constraintEnd_toStartOf="@id/latitude_degrees_text"
-        android:inputType="number"/>
-
-    <TextView
-        android:id="@+id/latitude_degrees_text"
-        android:text="@string/degrees_symbol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@id/latitude_degr_edit_text"
-        app:layout_constraintEnd_toStartOf="@id/latitude_minutes_edit_text"
-        app:layout_constraintTop_toTopOf="@id/latitude_text"
-        app:layout_constraintBottom_toBottomOf="@id/latitude_text"/>
-
-    <EditText
-        android:id="@+id/latitude_minutes_edit_text"
-        android:layout_width="@dimen/width_large"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/height_normal"
-        app:layout_constraintBottom_toBottomOf="@id/latitude_text"
-        app:layout_constraintEnd_toStartOf="@id/latitude_minutes_text"
-        app:layout_constraintStart_toEndOf="@id/latitude_degrees_text"
-        app:layout_constraintTop_toTopOf="@id/latitude_text"
-        android:inputType="number|numberDecimal"/>
-
-    <TextView
-        android:id="@+id/latitude_minutes_text"
-        android:text="@string/minutes_symbol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@id/latitude_minutes_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/latitude_text"
-        app:layout_constraintBottom_toBottomOf="@id/latitude_text"
-        android:layout_marginEnd="@dimen/margin_small"/>
+        android:inputType="number|numberSigned|numberDecimal"
+        android:layout_marginEnd="@dimen/height_small"
+        app:layout_constraintHorizontal_weight="4"/>
 
 
 
     <!-- строка долготы -->
     <TextView
         android:id="@+id/longtitude_text"
-        android:text="@string/longtitude_symbol"
-        android:layout_width="@dimen/width_small"
+        android:text="@string/lon_abbr"
+        android:layout_width="0dp"
         android:layout_height="@dimen/height_big"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/latitude_text"
+        app:layout_constraintEnd_toStartOf="@id/longtitude_degr_edit_text"
         android:textSize="@dimen/text_size_large"
-        android:gravity="center_vertical"
-        android:layout_marginStart="@dimen/margin_small" />
+        android:gravity="center"
+        android:layout_marginStart="@dimen/margin_small"
+        app:layout_constraintHorizontal_weight="1"/>
 
     <EditText
         android:id="@+id/longtitude_degr_edit_text"
-        android:layout_width="@dimen/width_normal"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/height_normal"
         app:layout_constraintTop_toTopOf="@id/longtitude_text"
         app:layout_constraintBottom_toBottomOf="@id/longtitude_text"
         app:layout_constraintStart_toEndOf="@id/longtitude_text"
-        app:layout_constraintEnd_toStartOf="@id/longtitude_degrees_text"
-        android:inputType="number"/>
-
-    <TextView
-        android:id="@+id/longtitude_degrees_text"
-        android:text="@string/degrees_symbol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@id/longtitude_degr_edit_text"
-        app:layout_constraintEnd_toStartOf="@id/longtitude_minutes_edit_text"
-        app:layout_constraintTop_toTopOf="@id/longtitude_text"
-        app:layout_constraintBottom_toBottomOf="@id/longtitude_text"/>
-
-    <EditText
-        android:id="@+id/longtitude_minutes_edit_text"
-        android:layout_width="@dimen/width_large"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/height_normal"
-        app:layout_constraintBottom_toBottomOf="@id/longtitude_text"
-        app:layout_constraintEnd_toStartOf="@id/longtitude_minutes_text"
-        app:layout_constraintStart_toEndOf="@id/longtitude_degrees_text"
-        app:layout_constraintTop_toTopOf="@id/longtitude_text"
-        android:inputType="number|numberDecimal"/>
-
-    <TextView
-        android:id="@+id/longtitude_minutes_text"
-        android:text="@string/minutes_symbol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@id/longtitude_minutes_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/longtitude_text"
-        app:layout_constraintBottom_toBottomOf="@id/longtitude_text"
-        android:layout_marginEnd="@dimen/margin_small"/>
+        android:layout_marginEnd="@dimen/height_small"
+        android:inputType="number|numberSigned|numberDecimal"
+        app:layout_constraintHorizontal_weight="4"/>
 
     <!-- строка высоты -->
     <TextView
@@ -153,7 +93,6 @@
         app:layout_constraintTop_toTopOf="@id/height_text"
         app:layout_constraintBottom_toBottomOf="@id/height_text"
         app:layout_constraintStart_toEndOf="@id/height_text"
-
         android:inputType="number"/>
 
     <TextView

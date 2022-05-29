@@ -15,8 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppFSTR"
-        android:name=".App">
-        <activity android:name=".view.activity.MainActivity">
+        android:name=".App"
+        android:windowSoftInputMode="adjustPan|stateHidden">
+        <activity android:name=".view.activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

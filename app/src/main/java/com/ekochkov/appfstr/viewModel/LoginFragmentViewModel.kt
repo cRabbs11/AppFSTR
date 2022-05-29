@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.ekochkov.appfstr.App
 import com.ekochkov.appfstr.data.Repository
 import com.ekochkov.appfstr.data.entity.User
+import com.ekochkov.appfstr.domain.Interactor
 import javax.inject.Inject
 
 class LoginFragmentViewModel: ViewModel() {
@@ -12,11 +13,11 @@ class LoginFragmentViewModel: ViewModel() {
     val userLiveData : LiveData<User?>
 
     @Inject
-    lateinit var repository: Repository
+    lateinit var interactor: Interactor
 
     init {
         App.instance.dagger.inject(this)
-        userLiveData = repository.getLiveDataUser()
+        userLiveData = interactor.getUserLiveData()
     }
 
 }

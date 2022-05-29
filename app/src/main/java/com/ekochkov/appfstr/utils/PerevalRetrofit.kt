@@ -2,11 +2,10 @@ package com.ekochkov.appfstr.utils
 
 import com.ekochkov.appfstr.data.entity.MountainDTO
 import com.ekochkov.appfstr.data.entity.MountainsListDTO
+import com.ekochkov.appfstr.data.entity.StatusDTO
+import io.reactivex.rxjava3.core.Observable
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface PerevalRetrofit {
 
@@ -14,5 +13,23 @@ interface PerevalRetrofit {
     fun getMountains(): Call<MountainsListDTO>
 
     @POST("api/v1/pereval/")
-    fun putMountain(@Body mountainDTO: MountainDTO): Call<String>
+    fun putMountain(
+        @Body mountain: MountainDTO
+    ): Observable<MountainDTO>
+
+    @GET("api/v1/pereval/{id}/status")
+    fun getMountainStatusById(
+        @Path("id") id: Int,
+    ): Observable<StatusDTO>
+
+    @GET("api/v1/pereval/{id}")
+    fun getMountainById(
+        @Path("id") id: Int,
+    ) : Observable<MountainDTO>
+
+    @PUT("api/v1/pereval/{id}")
+    fun updateMountainById(
+        @Path("id") id: Int,
+        @Body mountain: MountainDTO
+    ) : Call<MountainDTO>
 }

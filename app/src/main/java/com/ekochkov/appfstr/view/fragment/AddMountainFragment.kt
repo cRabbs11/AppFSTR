@@ -17,46 +17,43 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DiffUtil
 import com.ekochkov.appfstr.R
 import com.ekochkov.appfstr.data.entity.*
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_ADD
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_A1
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_A2
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_A3
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_B1
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_B2
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_B3
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.DIFFICULT_CATEGORY_NONE
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.SUB_CATEGORY_ESTIMATED
+import com.ekochkov.appfstr.data.entity.Mountain.Companion.SUB_CATEGORY_NOT_SURE
 import com.ekochkov.appfstr.databinding.FragmentAddMountainBinding
+import com.ekochkov.appfstr.diff.ImageDiff
 import com.ekochkov.appfstr.utils.Base64Converter
-import com.ekochkov.appfstr.utils.CoordsConverter
+import com.ekochkov.appfstr.utils.Constants
 import com.ekochkov.appfstr.utils.DateConverter
 import com.ekochkov.appfstr.view.adapters.ImageAdapter
 import com.ekochkov.appfstr.view.viewHolders.ImageHolder
 import com.ekochkov.appfstr.viewModel.AddMountainFragmentViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import java.util.*
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
-class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
+class AddMountainFragment: Fragment() {
 
     private val TAG_DATE_PICKER_FRAGMENT = "date_picker_fragment"
     private val TAG_COORDS_DIALOG_FRAGMENT = "coords_dialog_fragment"
     private val TAG_CAMERA_DIALOG_FRAGMENT = "coords_camera_fragment"
     private val TEXT_SELECT_DATE = "Выберите дату"
-    private val TEXT_LATITUDE_EXAMPLE = "N 55 36.4999"
-    private val TEXT_LONGTITUDE_EXAMPLE = "E 17 18.2332"
-
-    private val DIFFICULT_CATEGORY_NONE = "Н/К"
-    private val DIFFICULT_CATEGORY_A1 = "А1"
-    private val DIFFICULT_CATEGORY_A2 = "А2"
-    private val DIFFICULT_CATEGORY_A3 = "А3"
-    private val DIFFICULT_CATEGORY_B1 = "Б1"
-    private val DIFFICULT_CATEGORY_B2 = "Б2"
-    private val DIFFICULT_CATEGORY_B3 = "Б3"
-    private val SUB_CATEGORY_NOT_SURE = "не уверен"
-    private val SUB_CATEGORY_ESTIMATED = "оценочно"
-    private val DIFFICULT_ADD = "*"
+    private val MAX_IMAGES_COUNT = 3
 
     private lateinit var imageAdapter: ImageAdapter
     private lateinit var binding: FragmentAddMountainBinding
     private val viewModel : AddMountainFragmentViewModel by viewModels()
-    private var category = ""
-    private var selectedDate = Date().time
-    private var mountainLat = ""
-    private var mountainLon = ""
-    private var mountainHeight = ""
+    val compositeDisposable = CompositeDisposable()
 
     val permissionReadStorageLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
@@ -77,10 +74,6 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -93,22 +86,166 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.imageDescriptionLiveData.observe(viewLifecycleOwner) {
-            if (!binding.imageDescriptionEditText.editText?.text.toString().equals(it)) {
-                binding.imageDescriptionEditText.editText?.setText(it)
+        val mountainCashedId = arguments?.getInt(Constants.MOUNTAIN_CASHED_ID)
+        if (mountainCashedId!=null) {
+            viewModel.setEditMountain(mountainCashedId)
+        }
+
+
+        imageAdapter = ImageAdapter(object: ImageHolder.onClickListener {
+            override fun onDeleteImageClick(image: Image) {
+                viewModel.removeImage(image)
+            }
+
+            override fun onImageChanged(oldImage: Image, newImage: Image) {
+                viewModel.updateImage(oldImage, newImage)
+            }
+        })
+        binding.imageRecyclerView.adapter = imageAdapter
+
+        viewModel.toastEventLiveData.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
+
+        //название перевала
+        viewModel.mountainNameLiveData.observe(viewLifecycleOwner) {
+            if (binding.mountainNameEditText.editText?.text.toString() != it) {
+                binding.mountainNameEditText.editText?.setText(it)
+            }
+        }
+        binding.mountainNameEditText.editText?.doAfterTextChanged {
+            if (!it.isNullOrEmpty()) {
+                viewModel.setMountainName(it.toString())
             }
         }
 
+        //категория
+        binding.categoryChipGroup.setOnCheckedChangeListener { _, checkedId ->
+            var category = ""
+            when (checkedId) {
+                binding.chipCategoryNone.id -> {
+                    if (binding.chipCategoryNone.isChecked) { category = DIFFICULT_CATEGORY_NONE} }
+                binding.chipCategoryA1.id -> {
+                    if (binding.chipCategoryA1.isChecked) { category = DIFFICULT_CATEGORY_A1 } }
+                binding.chipCategoryA2.id -> {
+                    if (binding.chipCategoryA2.isChecked) { category = DIFFICULT_CATEGORY_A2 } }
+                binding.chipCategoryA3.id -> {
+                    if (binding.chipCategoryA3.isChecked) { category = DIFFICULT_CATEGORY_A3 } }
+                binding.chipCategoryB1.id -> {
+                    if (binding.chipCategoryB1.isChecked) { category = DIFFICULT_CATEGORY_B1 } }
+                binding.chipCategoryB2.id -> {
+                    if (binding.chipCategoryB2.isChecked) { category = DIFFICULT_CATEGORY_B2 } }
+                binding.chipCategoryB3.id -> {
+                    if (binding.chipCategoryB3.isChecked) { category = DIFFICULT_CATEGORY_B3 } }
+            }
+            if (category.isNotEmpty()) {
+                if (binding.chipAddDifficult.isChecked) {
+                    category += DIFFICULT_ADD
+                }
+                viewModel.setCategory(category)
+            }
+        }
+        viewModel.categoryLiveData.observe(viewLifecycleOwner) {
+            setCategoryAndDifficult(it)
+        }
+
+        //подкатегория
+        viewModel.subCategoryLiveData.observe(viewLifecycleOwner) {
+            binding.chipNotSure.isChecked = false
+            binding.chipEstimated.isChecked = false
+
+            it.forEach { subCategory ->
+                when (subCategory) {
+                    SUB_CATEGORY_NOT_SURE -> {
+                        binding.chipNotSure.isChecked = true
+                    }
+                    SUB_CATEGORY_ESTIMATED -> {
+                        binding.chipEstimated.isChecked = true
+                    }
+                }
+            }
+        }
+        binding.chipAddDifficult.setOnClickListener {
+            var category = ""
+            if (binding.chipCategoryNone.isChecked) {
+                category = DIFFICULT_CATEGORY_NONE
+            } else if (binding.chipCategoryA1.isChecked) {
+                category = DIFFICULT_CATEGORY_A1
+            } else if (binding.chipCategoryA2.isChecked) {
+                category = DIFFICULT_CATEGORY_A2
+            } else if (binding.chipCategoryA3.isChecked) {
+                category = DIFFICULT_CATEGORY_A3
+            } else if (binding.chipCategoryB1.isChecked) {
+                category = DIFFICULT_CATEGORY_B1 }
+            else if (binding.chipCategoryB2.isChecked) {
+                category = DIFFICULT_CATEGORY_B2
+            } else if (binding.chipCategoryB3.isChecked) {
+                category = DIFFICULT_CATEGORY_B3 }
+
+            if (category.isNotEmpty() && binding.chipAddDifficult.isChecked) {
+                category += DIFFICULT_ADD
+            }
+            viewModel.setCategory(category)
+            setSubDifficultToCategoryText(binding.chipAddDifficult.isChecked)
+        }
+
+        binding.chipEstimated.setOnClickListener {
+            if (binding.chipEstimated.isChecked) {
+                viewModel.addToSubCategory(SUB_CATEGORY_ESTIMATED)
+            } else {
+                viewModel.removeFromSubCategory(SUB_CATEGORY_ESTIMATED)
+            }
+        }
+        binding.chipNotSure.setOnClickListener {
+            if (binding.chipNotSure.isChecked) {
+                viewModel.addToSubCategory(SUB_CATEGORY_NOT_SURE)
+            } else {
+                viewModel.removeFromSubCategory(SUB_CATEGORY_NOT_SURE)
+            }
+        }
+
+        //координаты и высота
+        viewModel.coordsLiveData.observe(viewLifecycleOwner) {
+            val coordsText = "${it.latitude}\n${it.longitude}"
+            val heightText = "${it.height} ${getString(R.string.metres)}"
+
+            binding.heightText.text = heightText
+            binding.openCoordsBtn.text = coordsText
+        }
+
+        binding.openCoordsBtn.setOnClickListener {
+            openCoordsDialog()
+        }
+        childFragmentManager.setFragmentResultListener(CoordsDialogFragment.REQUEST_COORDS_KEY, viewLifecycleOwner) { requestKey, bundle ->
+            when (requestKey) {
+                CoordsDialogFragment.REQUEST_COORDS_KEY -> {
+                    val mountainLat = bundle.getString(CoordsDialogFragment.BUNDLE_LAT_KEY, "")
+                    val mountainLon = bundle.getString(CoordsDialogFragment.BUNDLE_LON_KEY, "")
+                    val mountainHeight = bundle.getString(CoordsDialogFragment.BUNDLE_HEIGHT_KEY, "")
+                    viewModel.setMountainCoords(Coords(mountainHeight, mountainLat, mountainLon))
+                }
+            }
+        }
+
+        //дата
+        viewModel.dateLiveData.observe(viewLifecycleOwner) {
+            binding.openDateBtn.text = DateConverter.fromLongToText(it, DateConverter.FORMAT_DD_MM_YYYY)
+        }
+
+        binding.openDateBtn.setOnClickListener {
+            openDatePicker()
+        }
+
+        //изображения
         viewModel.imageListLiveData.observe(viewLifecycleOwner) {
             updateImageRecyclerView(it)
 
             if (it.isEmpty()) {
-                binding.imageDescriptionEditText.visibility = View.GONE
+                binding.imageRecyclerView.visibility = View.GONE
             } else {
-                binding.imageDescriptionEditText.visibility = View.VISIBLE
+                binding.imageRecyclerView.visibility = View.VISIBLE
             }
-
-            if (it.size>=3) {
+            if (it.size>=MAX_IMAGES_COUNT) {
                 binding.addFromCameraBtn.isEnabled = false
                 binding.addFromGalleryBtn.isEnabled = false
             } else {
@@ -116,52 +253,6 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
                 binding.addFromGalleryBtn.isEnabled = true
             }
         }
-
-        childFragmentManager.setFragmentResultListener(CoordsDialogFragment.REQUEST_COORDS_KEY, viewLifecycleOwner) { requestKey, bundle ->
-            when (requestKey) {
-                CoordsDialogFragment.REQUEST_COORDS_KEY -> {
-                    mountainLat = bundle.getString(CoordsDialogFragment.BUNDLE_LAT_KEY, "")
-                    mountainLon = bundle.getString(CoordsDialogFragment.BUNDLE_LON_KEY, "")
-                    mountainHeight = bundle.getString(CoordsDialogFragment.BUNDLE_HEIGHT_KEY, "")
-                    var latDir = bundle.getString(CoordsDialogFragment.BUNDLE_LAT_DIR_KEY, "N")
-                    var lonDir = bundle.getString(CoordsDialogFragment.BUNDLE_LON_DIR_KEY, "E")
-                    binding.heightNameEditText.editText?.setText(mountainHeight)
-                    var lat = CoordsConverter.fromDecimalToDegrees(mountainLat.toDouble())
-                    var lon = CoordsConverter.fromDecimalToDegrees(mountainLon.toDouble())
-                    val latText = "${lat[0]} ${lat[1]}.${lat[2]}"
-                    val lonText = "${lon[0]} ${lon[1]}.${lon[2]}"
-
-                    binding.openCoordsBtn.text = "$latDir $latText\n$lonDir $lonText"
-                }
-            }
-        }
-
-        childFragmentManager.setFragmentResultListener(CameraFragment.REQUEST_CAMERA_KEY, viewLifecycleOwner) { requestKey, bundle ->
-            when (requestKey) {
-                CameraFragment.REQUEST_CAMERA_KEY -> {
-                    val image = buildImage(Uri.parse(bundle.getString(CameraFragment.BUNDLE_IMAGE_URI_STRING_KEY)))
-                    if (image!=null) {
-                        viewModel.addImage(image)
-                    }
-                }
-            }
-        }
-
-        binding.addMountainBtn.setOnClickListener {
-            if (isInputDataIsCorrect()) {
-                setInputData()
-                //viewModel.putMountainOnServer()
-            }
-        }
-
-        binding.openDateBtn.setOnClickListener {
-            openDatePicker()
-        }
-
-        binding.openCoordsBtn.setOnClickListener {
-            openCoordsDialog()
-        }
-
         binding.addFromGalleryBtn.setOnClickListener {
             if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 openGallery()
@@ -177,39 +268,29 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
             }
         }
 
-        binding.categoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                binding.chipCategoryNone.id -> {
-                    category = DIFFICULT_CATEGORY_NONE}
-                binding.chipCategoryA1.id -> {
-                    category = DIFFICULT_CATEGORY_A1}
-                binding.chipCategoryA2.id -> {
-                    category = DIFFICULT_CATEGORY_A2}
-                binding.chipCategoryA3.id -> {
-                    category = DIFFICULT_CATEGORY_A3}
-                binding.chipCategoryB1.id -> {
-                    category = DIFFICULT_CATEGORY_B1}
-                binding.chipCategoryB2.id -> {
-                    category = DIFFICULT_CATEGORY_B2}
-                binding.chipCategoryB3.id -> {
-                    category = DIFFICULT_CATEGORY_B3}
+        binding.addMountainBtn.setOnClickListener {
+            viewModel.createMountain()
+        }
+
+        //камера
+        childFragmentManager.setFragmentResultListener(CameraFragment.REQUEST_CAMERA_KEY, viewLifecycleOwner) { requestKey, bundle ->
+            when (requestKey) {
+                CameraFragment.REQUEST_CAMERA_KEY -> {
+                    val image = buildImage(Uri.parse(bundle.getString(CameraFragment.BUNDLE_IMAGE_URI_STRING_KEY)))
+                    if (image!=null) {
+                        viewModel.addImage(image)
+                    }
+                }
             }
         }
 
-        binding.chipAddDifficult.setOnClickListener {
-            setSubDifficultToCategoryText(binding.chipAddDifficult.isChecked)
-        }
-
-        binding.imageDescriptionEditText.editText?.doAfterTextChanged {
-            if (it.isNullOrEmpty()) {
-                viewModel.setImageDescription(it.toString())
+        viewModel.isMountainEditLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.addMountainBtn.text = getString(R.string.update)
+            } else {
+                binding.addMountainBtn.text = getString(R.string.add)
             }
         }
-
-        imageAdapter = ImageAdapter(this)
-        binding.imageRecyclerView.adapter = imageAdapter
-
-        initView()
     }
 
     private fun checkPermission(permission: String): Boolean {
@@ -224,7 +305,6 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
     }
 
     private fun openCamera() {
-        //(activity as MainActivity).openCameraFragment()
         val coordsDialog = CameraFragment()
         coordsDialog.show(childFragmentManager, TAG_CAMERA_DIALOG_FRAGMENT)
     }
@@ -241,21 +321,53 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
     }
 
     private fun buildImage(uri: Uri?): Image? {
-        if (Build.VERSION.SDK_INT >= 28 && uri!=null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && uri!=null) {
             val source = ImageDecoder.createSource(requireContext().contentResolver, uri)
             val bitmap = ImageDecoder.decodeBitmap(source)
             val stringImage = Base64Converter.fromBitmapToBase64(bitmap)
-            return Image("test_title", stringImage)
+            return Image(Image.DEFAULT_TITLE, stringImage)
         }
         //В задании есть требование по версии ОС не ниже android 29
         return null
     }
 
-    private fun updateImageRecyclerView(imageList: List<Image>) {
-        imageAdapter.images.clear()
-        imageAdapter.images.addAll(imageList)
-        imageAdapter.notifyDataSetChanged()
+
+    private fun setCategoryAndDifficult(fullCategory: String) {
+        println("fullCategory: ${fullCategory}")
+        var category = fullCategory
+        if (category.isNotEmpty()) {
+            val index = category.indexOf(DIFFICULT_ADD)
+            binding.chipAddDifficult.isChecked = index!=-1
+
+            if (category.contains(DIFFICULT_CATEGORY_NONE)) {
+                binding.chipCategoryNone.isChecked = true
+            } else if (category.contains(DIFFICULT_CATEGORY_A1)) {
+                binding.chipCategoryA1.isChecked = true
+            } else if (category.contains(DIFFICULT_CATEGORY_A2)) {
+                binding.chipCategoryA2.isChecked = true
+            } else if (category.contains(DIFFICULT_CATEGORY_A3)) {
+                binding.chipCategoryA3.isChecked = true
+            } else if (category.contains(DIFFICULT_CATEGORY_B1)) {
+                binding.chipCategoryB1.isChecked = true
+            } else if (category.contains(DIFFICULT_CATEGORY_B2)) {
+                binding.chipCategoryB2.isChecked = true
+            } else if (category.contains(DIFFICULT_CATEGORY_B3)) {
+                binding.chipCategoryB3.isChecked = true
+            }
+        }
     }
+
+    private fun updateImageRecyclerView(newList: List<Image>) {
+        val completible = Completable.fromAction{
+            val diff = ImageDiff(imageAdapter.images, newList)
+            val diffResult = DiffUtil.calculateDiff(diff)
+            imageAdapter.images.clear()
+            imageAdapter.images.addAll(newList)
+            diffResult.dispatchUpdatesTo(imageAdapter)
+        }.subscribe()
+        compositeDisposable.add(completible)
+    }
+
 
     private fun setSubDifficultToCategoryText(value: Boolean) {
         var textA1 = getString(R.string.category_a1)
@@ -281,65 +393,15 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
         binding.chipCategoryB3.text = textB3
     }
 
-    private fun isInputDataIsCorrect(): Boolean {
-        if (binding.mountainNameEditText.editText?.text.toString().isEmpty()) {
-            showToast(getString(R.string.mountain_name_is_empty))
-            return false
-        }
-        if (category.isEmpty()) {
-            showToast(getString(R.string.mountain_category_is_empty))
-            return false
-        }
-        if (selectedDate==0L) {
-            showToast(getString(R.string.mountain_date_is_empty))
-            return false
-        }
-        if (mountainLat.isEmpty() || mountainLon.isEmpty()) {
-            showToast(getString(R.string.mountain_coords_is_empty))
-            return false
-        }
-        if (mountainHeight.isEmpty()) {
-            showToast(getString(R.string.mountain_height_is_empty))
-            return false
-        }
-        return true
-    }
-
-    private fun setInputData() {
-        viewModel.setMountainName(binding.mountainNameEditText.editText?.text.toString())
-
-        var fullCategory = category
-        if (binding.chipAddDifficult.isChecked) {
-            fullCategory += DIFFICULT_ADD
-        }
-        viewModel.setMountainCategory(fullCategory)
-
-        var subCategoryList = arrayListOf<String>()
-        if (binding.chipNotSure.isChecked) {
-            subCategoryList.add(SUB_CATEGORY_NOT_SURE)
-        }
-        if (binding.chipEstimated.isChecked) {
-            subCategoryList.add(SUB_CATEGORY_ESTIMATED)
-        }
-        viewModel.setMountainSubCategory(subCategoryList)
-
-        viewModel.setMountainDate(selectedDate)
-
-        viewModel.setMountainCoords(mountainLat, mountainLon, mountainHeight)
-    }
-
     private fun openDatePicker() {
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
                 .setTitleText(TEXT_SELECT_DATE)
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
-
         datePicker.show(childFragmentManager, TAG_DATE_PICKER_FRAGMENT)
-
         datePicker.addOnPositiveButtonClickListener {
-            selectedDate = it
-            binding.openDateBtn.text = DateConverter.fromLongToText(selectedDate, DateConverter.FORMAT_DD_MM_YYYY)
+            viewModel.setMountainDate(it)
         }
     }
 
@@ -348,16 +410,8 @@ class AddMountainFragment: Fragment(), ImageHolder.onClickListener {
         coordsDialog.show(childFragmentManager, TAG_COORDS_DIALOG_FRAGMENT)
     }
 
-    private fun initView() {
-        binding.openDateBtn.text = DateConverter.fromLongToText(selectedDate, DateConverter.FORMAT_DD_MM_YYYY)
-        binding.openCoordsBtn.text = TEXT_LATITUDE_EXAMPLE + "\n" + TEXT_LONGTITUDE_EXAMPLE
-    }
-
-    private fun showToast(text: String) {
-        Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDeleteImageClick(image: Image) {
-        viewModel.removeImage(image)
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.dispose()
     }
 }

@@ -11,7 +11,7 @@
     <string name="optional">по желанию</string>
     <string name="mountain_name">название перевала</string>
     <string name="image_description">описание к фото</string>
-    <string name="height">высота</string>
+    <string name="height">Высота</string>
     <string name="metres">метров</string>
     <string name="mountain_category">категория перевала</string>
     <string name="category_none">Н/К</string>
@@ -27,7 +27,9 @@
     <string name="date_of_pass">Дата прохождения</string>
     <string name="coordinates">Координаты</string>
     <string name="latitude_symbol">N</string>
+    <string name="latitude_abbr">lat:</string>
     <string name="longtitude_symbol">E</string>
+    <string name="lon_abbr">lon:</string>
     <string name="degrees_symbol">*</string>
     <string name="minutes_symbol">\'</string>
     <string name="height_symbol">H</string>
@@ -35,12 +37,30 @@
     <string name="from_gallery">из галереи</string>
     <string name="from_camera">с камеры</string>
     <string name="add">добавить</string>
+    <string name="update">обновить</string>
+    <string name="coords">координаты</string>
     <string name="ok">ok</string>
-    <string name="add_coords">Добавить координаты:</string>
+    <string name="add_coords">Добавить координаты WGS(+/-x.x):</string>
     <string name="mountain_name_is_empty">название перевала не заполнено</string>
     <string name="mountain_category_is_empty">категория перевала не выбрана</string>
     <string name="mountain_date_is_empty">дата не выбрана</string>
     <string name="mountain_coords_is_empty">координаты не заданы</string>
     <string name="mountain_height_is_empty">высота не задана</string>
     <string name="height_is_lower_zero">высота не может быть меньше нуля</string>
+    <string name="not_all_data_inserted">не все данные введены</string>
+    <string name="send">отправить</string>
+    <string name="decline">отмена</string>
+
+    <string name="on_send">на отправку</string>
+    <string name="sended">отправлено</string>
+    <string name="accepted">принято</string>
+    <string name="published">опубликовано</string>
+    <string name="declined">отклонено</string>
+    <string name="logout">выйти</string>
+
+    <string name="describe_mountain">ОПИШИ ПЕРЕВАЛ</string>
+    <string name="describe_mountain_on_login">Наполняем каталог перевалов вместе</string>
+    <string name="lets_meet">Давайте знакомиться</string>
+    <string name="register_screen_describe">Запишем вас в базу туристов ФСТР</string>
+    <string name="click_on_add_mountain">Нажмите на + чтобы добавить перевал</string>
 </resources>

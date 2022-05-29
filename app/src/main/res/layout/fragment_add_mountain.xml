@@ -191,39 +191,41 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/height_name_edit_text"
+            app:layout_constraintEnd_toStartOf="@id/height_text"
             app:layout_constraintTop_toBottomOf="@id/coordinates_text"
             app:layout_constraintHorizontal_weight="3"
             android:layout_marginStart="@dimen/margin_small"
             android:textSize="@dimen/text_size_big"
+            android:text="@string/coords"
             app:icon="@drawable/ic_baseline_location_on_24"
             style="@style/OutlineRoundButton"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/height_name_edit_text"
+        <TextView
+            android:id="@+id/height_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/height"
+            app:layout_constraintTop_toBottomOf="@id/coordinates_divider"
+            app:layout_constraintStart_toStartOf="@id/height_text" />
+
+        <TextView
+            android:id="@+id/height_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="@id/open_coords_btn"
             app:layout_constraintBottom_toBottomOf="@id/open_coords_btn"
             app:layout_constraintStart_toEndOf="@id/open_coords_btn"
-            app:layout_constraintHorizontal_weight="2"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="2"
             android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginEnd="@dimen/margin_small"
-            android:hint="@string/height"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginEnd="@dimen/width_small"
+            android:textSize="@dimen/text_size_big"/>
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/photo_divider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/height_name_edit_text"
+            app:layout_constraintTop_toBottomOf="@id/open_coords_btn"
             android:layout_marginTop="@dimen/margin_tiny"/>
 
         <TextView
@@ -262,41 +264,23 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/image_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height_normal"
+            android:minHeight="@dimen/image_height_normal"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/add_from_camera_btn"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/margin_smallest"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/image_description_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/image_recycler_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginEnd="@dimen/margin_small"
-            android:hint="@string/image_description"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:visibility="gone">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="horizontal" />
 
         <Button
             android:id="@+id/add_mountain_btn"
-            android:text="add"
+            android:text="@string/add"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_button_large"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_small"
-            app:layout_constraintTop_toBottomOf="@id/image_description_edit_text"
+            app:layout_constraintTop_toBottomOf="@id/image_recycler_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             style="@style/RoundButton"/>

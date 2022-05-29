@@ -14,4 +14,10 @@
     <color name="blue_light">#6971FF</color>
     <color name="blue">#424CFF</color>
     <color name="blue_dark">#2028C5</color>
+
+    <color name="green">#38FF00</color>
+
+    <color name="red">#FF1515</color>
+
+    <color name="gray">#6A6A6A</color>
 </resources>

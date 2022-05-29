@@ -10,5 +10,6 @@ class ImageHolder(val view: View): RecyclerView.ViewHolder(view) {
 
     interface onClickListener {
         fun onDeleteImageClick(image: Image)
+        fun onImageChanged(oldImage: Image, newImage: Image)
     }
 }

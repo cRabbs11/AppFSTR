@@ -4,6 +4,7 @@ import com.ekochkov.appfstr.utils.PerevalAPIConstants
 import com.ekochkov.appfstr.utils.PerevalRetrofit
 import dagger.Module
 import dagger.Provides
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -29,6 +30,7 @@ class RemoteModule {
         val retrofit = Retrofit.Builder()
             .baseUrl(PerevalAPIConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .client(okHttpClient)
             .build().create(PerevalRetrofit::class.java)
         return retrofit

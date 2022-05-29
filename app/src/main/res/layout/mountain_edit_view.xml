@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/mountain_edit_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/edit_mountain_btn"
+        android:layout_width="@dimen/height_normal"
+        android:layout_height="@dimen/height_normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/margin_smallest"
+        android:background="@drawable/background_round_blue"
+        android:padding="@dimen/padding_10"
+        android:src="@drawable/ic_baseline_edit_24"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

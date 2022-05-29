@@ -3,14 +3,36 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/background_corner_round_black.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/background_round_blue.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/background_round_gray.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/background_round_green.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/background_round_red.xml" value="0.2075" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.163" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/icon_accepted.xml" value="0.164" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/icon_decline.xml" value="0.164" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/icon_on_send.xml" value="0.164" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/icon_on_sended.xml" value="0.164" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/icon_published.xml" value="0.164" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/image_background.xml" value="0.163" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/mounntain_edit_view.xml" value="0.2075" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/drawable/mountain_status_view.xml" value="0.2075" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/dialog_fragment_coords.xml" value="0.2653985507246377" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_add_mountain.xml" value="0.33" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_camera.xml" value="0.22" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_home.xml" value="0.17249240121580547" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_login.xml" value="0.17604166666666668" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/fragment_register.xml" value="0.2653985507246377" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/item_created_mountain.xml" value="0.2653985507246377" />
         <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/item_image.xml" value="0.2520833333333333" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/item_mountain.xml" value="0.2653985507246377" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/item_sended_mountain.xml" value="0.2653985507246377" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/mountain_edit_view.xml" value="0.2653985507246377" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/layout/mountain_status_view.xml" value="0.2653985507246377" />
+        <entry key="..\:/android projects/AppFSTR/app/src/main/res/menu/top_menu.xml" value="0.2953125" />
       </map>
     </option>
   </component>
